@@ -16,19 +16,19 @@ public class PollService: IPollService
 
     public Poll CreatePoll(Poll poll)
     {
-        var newPoll = new Poll
-        {
-            Question = poll.Question,
-            Options = poll.Options.Select(option => new Option
-            {
-                Text = option.Text
-            }).ToList()
-        };
-
-        _context.Polls.Add(poll);
-        _context.SaveChanges();
-
-        return poll;
+        // var newPoll = new Poll
+        // {
+        //     Question = poll.Question,
+        //     Options = poll.Options.Select(option => new Option
+        //     {
+        //         Text = option.Text
+        //     }).ToList()
+        // };
+        //
+        // _context.Polls.Add(poll);
+        // _context.SaveChanges();
+        //
+        return null;
     }
 
     public Poll GetPoll(int pollId)
@@ -57,14 +57,14 @@ public class PollService: IPollService
         //     throw new InvalidOperationException("User has already voted on this poll");
         // }
 
-        var newVote = new Vote
-        {
-            User_Id = vote.User_Id,
-            Poll_Id = pollId,
-            Option_Id = vote.Option_Id
-        };
-
-        _context.Votes.Add(vote);
-        _context.SaveChanges();
+        // var newVote = new Vote
+        // {
+        //     User_Id = vote.User_Id,
+        //     Poll_Id = pollId,
+        //     Option_Id = vote.Option_Id
+        // };
+        //
+        // _context.Votes.Add(vote);
+        // _context.SaveChanges();
     }
 }

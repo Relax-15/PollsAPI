@@ -7,13 +7,13 @@ namespace PollsAPI.Entities;
 public class Vote
 {
     public int Id { get; set; }
+    public int UserId { get; set; }
+    public string Answer { get; set; }
+    public DateTime CreatedAt { get; set; }
+    public DateTime UpdatedAt { get; set; }
+
     
-    public int User_Id { get; set; }
-    public User User { get; set; }
-    
-    public int Poll_Id { get; set; }
+    public int PollId { get; set; }
     public Poll Poll { get; set; }
-    
-    public int Option_Id { get; set; }
-    public Option Option { get; set; }
+
 }

@@ -19,7 +19,9 @@ public class TokenService: ITokenService
     {
         var claims = new List<Claim>()
         {
-            new Claim(JwtRegisteredClaimNames.NameId, user.Username)
+            new Claim(JwtRegisteredClaimNames.NameId, user.Name),
+            new Claim("UserId", user.Id.ToString()) 
+            
         };
 
         var credentials = new SigningCredentials(_key, SecurityAlgorithms.HmacSha512Signature);
@@ -27,7 +29,7 @@ public class TokenService: ITokenService
         var tokenDescriptor = new SecurityTokenDescriptor
         {
             Subject = new ClaimsIdentity(claims),
-            Expires = DateTime.Now.AddDays(7),
+            Expires = DateTime.Now.AddHours(1),
             SigningCredentials = credentials
         };
 
@@ -36,5 +38,20 @@ public class TokenService: ITokenService
         var token = tokenHandler.CreateToken(tokenDescriptor);
 
         return tokenHandler.WriteToken(token);
+    }
+    
+    public int ExtractUserIdFromToken(string token)
+    {
+        var tokenHandler = new JwtSecurityTokenHandler();
+        var jwtToken = tokenHandler.ReadJwtToken(token);
+
+        var userIdClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "UserID");
+            
+        if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+        {
+            throw new ArgumentException("Invalid JWT token or user ID not found.");
+        }
+
+        return userId;
     }
 }

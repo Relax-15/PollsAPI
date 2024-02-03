@@ -6,6 +6,7 @@ using PollsAPI.Entities;
 using PollsAPI.Interfaces;
 using System.Security.Cryptography;
 using System.Text;
+using PollsAPI.DTOs.Responses;
 
 namespace PollsAPI.Controllers;
 
@@ -24,41 +25,57 @@ public class AccountAuthController: ControllerBase
     }
 
     [HttpPost("register")]
-    public async Task<ActionResult<AuthDto>> Register(UserDto userDto)
+    public async Task<ActionResult> Register(RegisterDto registerDto)
     {
-        var userExists = _context.Users.FirstOrDefault(x => x.Username == userDto.Username.ToLower());
-        if (userExists is not null) return BadRequest("Username is taken");
+        var userExists = await _context.Users.FirstOrDefaultAsync(x => x.Email == registerDto.Email.ToLower());
+        if (userExists is not null) return BadRequest("Email already registered");
 
         using var hmac = new HMACSHA512();
 
         var user = new User
         {
-            Username = userDto.Username,
-            PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(userDto.Password)),
-            PasswordSalt = hmac.Key
+            Name = registerDto.Name,
+            Email = registerDto.Email,
+            PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
+            PasswordSalt = hmac.Key,
+            EmailVerifiedAt = null,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
         };
 
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
 
-        //return Ok();
-        return new AuthDto()
+        var response = new AuthResponse()
         {
-            Username = user.Username,
-            Token = _tokenService.CreateToken(user)
+            Token = _tokenService.CreateToken(user),
+            Id = user.Id,
+            Name = user.Name,
+            Email = user.Email,
+            EmailVerifiedAt = user.EmailVerifiedAt,
+            CreatedAt = user.CreatedAt,
+            UpdatedAt = user.UpdatedAt
         };
+        //return Ok();
+        // return new PollDto()
+        // {
+        //     Username = user.Username,
+        //     Token = _tokenService.CreateToken(user)
+        // };
+
+        return Ok(response);
     }
     
     [HttpPost("login")]
-    public async Task<ActionResult<AuthDto>> Login(UserDto userDto)
+    public async Task<ActionResult<AuthResponse>> Login(LoginDto loginDto)
     {
-        var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Username == userDto.Username);
+        var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginDto.Email);
         if (existingUser is null)
-            return NotFound("Username not found");
+            return NotFound("Email not found");
 
         using var hmac = new HMACSHA512(existingUser.PasswordSalt);
 
-        var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(userDto.Password));
+        var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));
 
         for (int i = 0; i < computedHash.Length; i++)
         {
@@ -66,27 +83,32 @@ public class AccountAuthController: ControllerBase
         }
 
         //return Ok("Logged In");
-        return new AuthDto()
+        return new AuthResponse()
         {
-            Username = existingUser.Username,
-            Token = _tokenService.CreateToken(existingUser)
+            Token = _tokenService.CreateToken(existingUser),
+            Id = existingUser.Id,
+            Name = existingUser.Name,
+            Email = existingUser.Email,
+            EmailVerifiedAt = existingUser.EmailVerifiedAt,
+            CreatedAt = existingUser.CreatedAt,
+            UpdatedAt = existingUser.UpdatedAt
         };
     }
 
     [HttpGet("{id}")]
-    public async Task<ActionResult<string>> GetUserById(int id)
+    public async Task<ActionResult<object>> GetUserById(int id)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Id == id);
         if (user == null)
-            return NotFound("Username not found");
+            return NotFound("User not found");
 
-        return user.Username;
+        return new {user.Id, user.Name, user.Email, user.EmailVerifiedAt, user.CreatedAt, user.UpdatedAt};
     }
-
+    
     [HttpGet("getAllUsers")]
     public async Task<ActionResult<List<string>>> GetAllUsers()
     {
-        return await _context.Users.Select(un => un.Username).ToListAsync();
+        return await _context.Users.Select(n => n.Name).ToListAsync();
     }
 
 }
