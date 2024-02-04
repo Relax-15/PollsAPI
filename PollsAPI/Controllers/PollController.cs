@@ -29,7 +29,6 @@ public class PollController: ControllerBase
             UserId = userId,
             Options = poll.Options,
             CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
         };
 
         _context.Polls.Add(newPoll);

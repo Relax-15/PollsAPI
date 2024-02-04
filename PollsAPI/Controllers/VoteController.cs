@@ -2,9 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PollsAPI.Data;
 using PollsAPI.DTOs;
-using PollsAPI.DTOs.Responses;
 using PollsAPI.Entities;
-using PollsAPI.Interfaces;
 
 namespace PollsAPI.Controllers;
 
@@ -38,7 +36,6 @@ public class VoteController : ControllerBase
             PollId = pollId,
             Answer = voteDto.Answer,
             CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow,
         };
         _context.Votes.Add(vote);
         await _context.SaveChangesAsync();

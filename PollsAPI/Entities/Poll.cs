@@ -12,7 +12,6 @@ public class Poll
     public string Title { get; set; }
     public string Options { get; set; }
     public DateTime CreatedAt { get; set; }
-    public DateTime UpdatedAt { get; set; }
     
     
 }

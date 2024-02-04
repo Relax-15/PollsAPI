@@ -12,7 +12,7 @@ using PollsAPI.Data;
 namespace PollsAPI.Data.Migrations
 {
     [DbContext(typeof(PollDbContext))]
-    [Migration("20240204164218_InitialMigration")]
+    [Migration("20240204185315_InitialMigration")]
     partial class InitialMigration
     {
         /// <inheritdoc />
@@ -44,9 +44,6 @@ namespace PollsAPI.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
@@ -72,9 +69,6 @@ namespace PollsAPI.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("EmailVerifiedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -86,9 +80,6 @@ namespace PollsAPI.Data.Migrations
                     b.Property<byte[]>("PasswordSalt")
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -112,9 +103,6 @@ namespace PollsAPI.Data.Migrations
 
                     b.Property<int>("PollId")
                         .HasColumnType("int");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");

@@ -38,9 +38,7 @@ public class AccountAuthController: ControllerBase
             Email = registerDto.Email,
             PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
             PasswordSalt = hmac.Key,
-            EmailVerifiedAt = null,
             CreatedAt = DateTime.UtcNow,
-            UpdatedAt = DateTime.UtcNow
         };
 
         _context.Users.Add(user);
@@ -52,9 +50,7 @@ public class AccountAuthController: ControllerBase
             Id = user.Id,
             Name = user.Name,
             Email = user.Email,
-            EmailVerifiedAt = user.EmailVerifiedAt,
             CreatedAt = user.CreatedAt,
-            UpdatedAt = user.UpdatedAt
         };
 
 
@@ -84,9 +80,7 @@ public class AccountAuthController: ControllerBase
             Id = existingUser.Id,
             Name = existingUser.Name,
             Email = existingUser.Email,
-            EmailVerifiedAt = existingUser.EmailVerifiedAt,
             CreatedAt = existingUser.CreatedAt,
-            UpdatedAt = existingUser.UpdatedAt
         };
     }
 
@@ -97,7 +91,7 @@ public class AccountAuthController: ControllerBase
         if (user == null)
             return NotFound("User not found");
 
-        return new {user.Id, user.Name, user.Email, user.EmailVerifiedAt, user.CreatedAt, user.UpdatedAt};
+        return new {user.Id, user.Name, user.Email, user.CreatedAt};
     }
     
     [HttpGet("getAllUsers")]

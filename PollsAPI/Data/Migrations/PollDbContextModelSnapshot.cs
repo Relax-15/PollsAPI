@@ -22,28 +22,6 @@ namespace PollsAPI.Data.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("PollsAPI.Entities.Option", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<int>("PollId")
-                        .HasColumnType("int");
-
-                    b.Property<string>("Text")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("PollId");
-
-                    b.ToTable("Options");
-                });
-
             modelBuilder.Entity("PollsAPI.Entities.Poll", b =>
                 {
                     b.Property<int>("Id")
@@ -52,16 +30,19 @@ namespace PollsAPI.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Question")
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Options")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
-
-                    b.Property<string>("User_Id")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -85,9 +66,6 @@ namespace PollsAPI.Data.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("EmailVerifiedAt")
-                        .HasColumnType("datetime2");
-
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -99,9 +77,6 @@ namespace PollsAPI.Data.Migrations
                     b.Property<byte[]>("PasswordSalt")
                         .IsRequired()
                         .HasColumnType("varbinary(max)");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("datetime2");
 
                     b.HasKey("Id");
 
@@ -116,27 +91,20 @@ namespace PollsAPI.Data.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<int>("OptionId")
-                        .HasColumnType("int");
+                    b.Property<string>("Answer")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<int>("Option_Id")
-                        .HasColumnType("int");
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
 
                     b.Property<int>("PollId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Poll_Id")
                         .HasColumnType("int");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
-                    b.Property<int>("User_Id")
-                        .HasColumnType("int");
-
                     b.HasKey("Id");
-
-                    b.HasIndex("OptionId");
 
                     b.HasIndex("PollId");
 
@@ -145,23 +113,12 @@ namespace PollsAPI.Data.Migrations
                     b.ToTable("Votes");
                 });
 
-            modelBuilder.Entity("PollsAPI.Entities.Option", b =>
-                {
-                    b.HasOne("PollsAPI.Entities.Poll", "Poll")
-                        .WithMany("Options")
-                        .HasForeignKey("PollId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Poll");
-                });
-
             modelBuilder.Entity("PollsAPI.Entities.Poll", b =>
                 {
                     b.HasOne("PollsAPI.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.Navigation("User");
@@ -169,41 +126,21 @@ namespace PollsAPI.Data.Migrations
 
             modelBuilder.Entity("PollsAPI.Entities.Vote", b =>
                 {
-                    b.HasOne("PollsAPI.Entities.Option", "Option")
-                        .WithMany("Votes")
-                        .HasForeignKey("OptionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("PollsAPI.Entities.Poll", "Poll")
-                        .WithMany("Votes")
+                        .WithMany()
                         .HasForeignKey("PollId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("PollsAPI.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
-
-                    b.Navigation("Option");
 
                     b.Navigation("Poll");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("PollsAPI.Entities.Option", b =>
-                {
-                    b.Navigation("Votes");
-                });
-
-            modelBuilder.Entity("PollsAPI.Entities.Poll", b =>
-                {
-                    b.Navigation("Options");
-
-                    b.Navigation("Votes");
                 });
 #pragma warning restore 612, 618
         }
