@@ -39,19 +39,19 @@ public class TokenService: ITokenService
 
         return tokenHandler.WriteToken(token);
     }
-    
-    public int ExtractUserIdFromToken(string token)
-    {
-        var tokenHandler = new JwtSecurityTokenHandler();
-        var jwtToken = tokenHandler.ReadJwtToken(token);
-
-        var userIdClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "UserID");
-            
-        if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
-        {
-            throw new ArgumentException("Invalid JWT token or user ID not found.");
-        }
-
-        return userId;
-    }
+    //
+    // public int ExtractUserIdFromToken(string token)
+    // {
+    //     var tokenHandler = new JwtSecurityTokenHandler();
+    //     var jwtToken = tokenHandler.ReadJwtToken(token);
+    //
+    //     var userIdClaim = jwtToken.Claims.FirstOrDefault(claim => claim.Type == "UserId");
+    //         
+    //     if (userIdClaim == null || !int.TryParse(userIdClaim.Value, out int userId))
+    //     {
+    //         throw new ArgumentException("Invalid JWT token or user ID not found.");
+    //     }
+    //
+    //     return userId;
+    // }
 }

@@ -1,8 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using PollsAPI.Data;
+using PollsAPI.DTOs;
 using PollsAPI.Entities;
-using PollsAPI.Interfaces;
 
 namespace PollsAPI.Controllers;
 
@@ -12,28 +13,26 @@ namespace PollsAPI.Controllers;
 public class PollController: ControllerBase
 {
     private readonly PollDbContext _context;
-    private readonly ITokenService _tokenService;
 
 
-    public PollController(IPollService service, ITokenService tokenService, PollDbContext context)
+    public PollController( PollDbContext context)
     {
         _context = context;
-        _tokenService = tokenService;
     }
 
-    [HttpPost("createPoll")]
-    public async Task<ActionResult<Poll>> CreatePoll(Poll poll)
+    [HttpPost("{userId}/createPoll")]
+    public async Task<ActionResult<Poll>> CreatePoll(int userId, PollDto poll)
     {
         var newPoll = new Poll
         {
             Title = poll.Title,
-            UserId = _tokenService.ExtractUserIdFromToken(Request.Headers["Authorization"]),
+            UserId = userId,
             Options = poll.Options,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow
         };
 
-        _context.Polls.Add(poll);
+        _context.Polls.Add(newPoll);
         _context.SaveChanges();
 
         return newPoll;
@@ -51,4 +50,9 @@ public class PollController: ControllerBase
         return poll;
     }
     
+    [HttpGet("getAllPolls")]
+    public async Task<ActionResult<List<Poll>>> GetAllPolls()
+    {
+        return await _context.Polls.ToListAsync();
+    }
 }

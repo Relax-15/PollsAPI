@@ -15,37 +15,34 @@ public class VoteController : ControllerBase
 {
     
     private readonly PollDbContext _context;
-    private readonly ITokenService _tokenService;
 
 
-    public VoteController(PollDbContext context, ITokenService tokenService)
+    public VoteController(PollDbContext context)
     {
         _context = context;
-        _tokenService = tokenService;
     }
 
-    [HttpPost]
-    public async Task<ActionResult<object>> AddVote(PollDto pollDto)
+    [HttpPost("{userId}/{pollId}/AddVote")]
+    public async Task<ActionResult<object>> AddVote(int userId, int pollId, VoteDto voteDto)
     {
         // check if poll is exist
-        var poll = await _context.Polls.FindAsync(pollDto.PollId);
+        var poll = await _context.Polls.FindAsync(pollId);
         if (poll is null)
         {
             return NotFound("Poll not found.");
         }
         
-        var userId = _tokenService.ExtractUserIdFromToken(Request.Headers["Authorization"]);
-        var newVote = new Vote
+        var vote = new Vote
         {
             UserId = userId,
-            PollId = poll.Id,
-            Answer = pollDto.Answer,
+            PollId = pollId,
+            Answer = voteDto.Answer,
             CreatedAt = DateTime.UtcNow,
             UpdatedAt = DateTime.UtcNow,
         };
-        _context.Votes.Add(newVote);
+        _context.Votes.Add(vote);
         await _context.SaveChangesAsync();
 
-        return newVote;
+        return vote;
     }
 }

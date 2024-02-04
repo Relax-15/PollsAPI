@@ -56,12 +56,7 @@ public class AccountAuthController: ControllerBase
             CreatedAt = user.CreatedAt,
             UpdatedAt = user.UpdatedAt
         };
-        //return Ok();
-        // return new PollDto()
-        // {
-        //     Username = user.Username,
-        //     Token = _tokenService.CreateToken(user)
-        // };
+
 
         return Ok(response);
     }
@@ -106,9 +101,9 @@ public class AccountAuthController: ControllerBase
     }
     
     [HttpGet("getAllUsers")]
-    public async Task<ActionResult<List<string>>> GetAllUsers()
+    public async Task<ActionResult<object>> GetAllUsers()
     {
-        return await _context.Users.Select(n => n.Name).ToListAsync();
+        return await _context.Users.Select(n => new { n.Name, n.Email, n.CreatedAt }).ToListAsync();
     }
 
 }

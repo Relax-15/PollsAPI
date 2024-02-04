@@ -15,12 +15,25 @@ public class PollDbContext : DbContext
     public DbSet<Poll> Polls { get; set; }
     public DbSet<Vote>Votes { get; set; }
     
-    // protected override void OnModelCreating(ModelBuilder modelBuilder)
-    // {
-    //     // Define relationships
-    //     modelBuilder.Entity<User>()
-    //         .HasMany(u => u.Polls)
-    //         .WithOne(p => p.User)
-    //         .HasForeignKey(p => p.UserId);
-    // }
+    protected override void OnModelCreating(ModelBuilder modelBuilder)
+    {
+        // Define relationships
+        modelBuilder.Entity<Poll>()
+            .HasOne(p => p.User)
+            .WithMany()
+            .HasForeignKey(p => p.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Vote>()
+            .HasOne(v => v.User)
+            .WithMany()
+            .HasForeignKey(v => v.UserId)
+            .OnDelete(DeleteBehavior.Restrict);
+
+        modelBuilder.Entity<Vote>()
+            .HasOne(v => v.Poll)
+            .WithMany()
+            .HasForeignKey(v => v.PollId)
+            .OnDelete(DeleteBehavior.Restrict);
+    }
 }
